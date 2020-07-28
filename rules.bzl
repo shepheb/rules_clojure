@@ -1,3 +1,4 @@
+load("@rules_clojure//rules:aot.bzl", _clojure_aot_impl = "clojure_aot_impl")
 load("@rules_clojure//rules:library.bzl", _clojure_library_impl = "clojure_library_impl")
 load("@rules_clojure//rules:repl.bzl", _clojure_repl_impl = "clojure_repl_impl")
 load("@rules_clojure//rules:test.bzl", _clojure_test_impl = "clojure_test_impl")
@@ -37,4 +38,19 @@ clojure_test = rule(
     test = True,
     toolchains = ["@rules_clojure//rules:toolchain_type"],
     implementation = _clojure_test_impl,
+)
+
+clojure_aot = rule(
+    doc = "Ahead-of-time Compilation and Class Generation.",
+    attrs = {
+        "deps": attr.label_list(default = [], providers = [JavaInfo], doc = "Libraries to link into this library."),
+        "ns": attr.string_list(default = [], doc = "Namespaces to be compiled."),
+        # TODO: Add compiler options https://clojure.org/reference/compilation#_compiler_options
+    },
+    outputs = {
+        "jar": "%{name}.jar",
+    },
+    provides = [JavaInfo],
+    toolchains = ["@rules_clojure//rules:toolchain_type"],
+    implementation = _clojure_aot_impl,
 )
